@@ -8,23 +8,20 @@ common_includes += hardware/qcom/display-caf/libexternal
 common_includes += hardware/qcom/display-caf/libqservice
 common_includes += hardware/qcom/display-caf/libvirtual
 
-ifeq ($(TARGET_USES_POST_PROCESSING),true)
-    common_flags     += -DUSES_POST_PROCESSING
-    common_includes += $(TARGET_OUT_HEADERS)/pp/inc
-endif
-
-common_header_export_path := qcom/display-caf
-
 #Common libraries external to display HAL
 common_libs := liblog libutils libcutils libhardware
 
-ifeq ($(TARGET_USES_POST_PROCESSING),true)
-    common_libs += libmm-abl
-endif
+common_header_export_path := qcom/display
 
 #Common C flags
 common_flags := -DDEBUG_CALC_FPS -Wno-missing-field-initializers
 common_flags += -Werror
+
+ifeq ($(TARGET_USES_POST_PROCESSING),true)
+    common_flags += -DUSES_POST_PROCESSING
+    common_includes += $(TARGET_OUT_HEADERS)/pp/inc
+    common_libs += libmm-abl
+endif
 
 ifeq ($(ARCH_ARM_HAVE_NEON),true)
     common_flags += -D__ARM_HAVE_NEON
@@ -38,9 +35,6 @@ ifneq ($(filter msm8974 msm8x74 msm8226 msm8x26,$(TARGET_BOARD_PLATFORM)),)
     # common_flags += -DVENUS_COLOR_FORMAT
     common_flags += -DMDSS_TARGET
 endif
-
-common_deps  :=
-kernel_includes :=
 
 # Executed only on QCOM BSPs
 ifeq ($(TARGET_USES_QCOM_BSP),true)
